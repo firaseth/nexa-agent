@@ -1,0 +1,21 @@
+# Python
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+.env.example
+.dist/
+.build/
+*.log
+.vscode/
+.idea/
+outputs/
+*.mp4
+
+# Docker
+*.tar
+
+# Editor backups
+*~
