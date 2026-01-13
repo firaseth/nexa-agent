@@ -1,0 +1,70 @@
+Summary
+-------
+This PR flattens and normalizes the repository layout for Nexa Agent so the code structure follows conventional Python project expectations. It moves key modules out of nested app/ folders into a canonical layout, moves the Dockerfile to the repository root, and places the CI workflow at .github/workflows/test.yml.
+
+What changed
+------------
+- apps/
+  - moved engine.py to apps/nexa_script/engine.py
+  - moved router.py to apps/nexa_vision/router.py
+  - moved outreach.py to apps/nexa_press/outreach.py
+  - added __init__.py files where appropriate
+- core/
+  - moved agent_graph.py to core/agent_graph.py
+  - moved guardrails.py to core/guardrails.py
+- Dockerfile moved to repository root
+- GitHub Actions workflow moved/created at .github/workflows/test.yml
+- docs/ placed at docs/ with BRAND_GUIDE.md and STRATEGY.md
+- tests/ contains a smoke test
+- Branch: chore/flatten-structure
+
+Why
+---
+The repository previously contained deeply nested duplicated folders (e.g., app/apps/... repeated), which made imports and CI paths brittle and non-standard. Flattening:
+
+- simplifies imports and execution (uvicorn app.main:app)
+- improves discoverability of modules for contributors
+- aligns CI and Docker usage with common tooling expectations
+
+How to test locally
+-------------------
+1. Ensure branch is checked out:
+   git checkout chore/flatten-structure
+
+2. (Optional) Create & activate a venv:
+   python -m venv .venv
+   source .venv/bin/activate
+
+3. Install dependencies:
+   pip install -r requirements.txt
+
+4. Run the app:
+   uvicorn app.main:app --reload
+
+5. Smoke test:
+   pytest -q
+
+6. Verify Docker build (optional):
+   docker build -t nexa-agent .
+
+Checklist (reviewers: please verify the items below)
+- [ ] Verify moved files exist at the canonical paths:
+  - apps/nexa_script/engine.py
+  - apps/nexa_vision/router.py
+  - apps/nexa_press/outreach.py
+  - core/agent_graph.py
+  - core/guardrails.py
+  - app/main.py
+  - Dockerfile at repo root
+  - .github/workflows/test.yml at repo root
+- [ ] Run pytest locally and confirm tests pass
+- [ ] Confirm CI (GitHub Actions) runs successfully for this PR
+- [ ] Confirm imports work (no broken relative imports)
+- [ ] Confirm Dockerfile builds successfully (optional)
+- [ ] Remove any leftover empty or duplicate directories (if present)
+- [ ] Update any docs/README references if paths changed
+
+Notes / follow-ups
+-----------------
+- If there are any import errors after this restructure, comment here with the traceback and I will prepare targeted fixes (sed/patch or small code changes).
+- If you’d like, I can update CI workflow to run linting and type checks (flake8 / mypy) in a follow-up PR.
